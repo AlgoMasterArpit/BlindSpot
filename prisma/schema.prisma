@@ -1,0 +1,117 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. COMPANY (The Parent Organization) 🏢
+// Example: "Domino's India"
+// Iske andar bohot saare Managers (Users) honge.
+model Company {
+  id        String   @id @default(cuid())
+  name      String   
+  createdAt DateTime @default(now())
+
+  // Relation: Ek Company ke paas bohot saare Managers/Employees hote hain
+  users     User[]
+}
+
+// 2. USER (The Branch Manager / HR / CEO) 👤
+// Ye wo log hain jo dashboard par login karenge.
+model User {
+  id                  String     @id @default(cuid())
+  username            String     @unique
+  email               String     @unique
+  password            String
+  
+  // OTP Verification
+  verifyCode          String
+  verifyCodeExpiry    DateTime
+  isVerified          Boolean    @default(false)
+
+  // 🔥 The Toggle Switch (User Request)
+  // Manager isse OFF kar dega toh koi naya message nahi aayega.
+  isAcceptingMessages Boolean    @default(true)
+
+  // 🔥 Role System (User Request)
+  // Agar isCEO = true, toh wo poori Company ke messages dekh sakta hai.
+  // Agar isCEO = false, toh wo sirf apni Branch ke messages dekh sakta hai.
+  isCEO               Boolean    @default(false)
+
+  // Relation: Ye User kis Company ka hissa hai?
+  companyId           String?    
+  company             Company?   @relation(fields: [companyId], references: [id])
+
+
+//User ki table me companyId ka column hoga 
+//Agar hum ? nahi lagayenge, toh Database force karega:
+// "Bhai pehle company batao, tabhi user banega." Hum wo strictness nahi chahte.
+
+//user.company likhoge, toh ye link automatically us Company ki saari details (Name, Address, etc.) le aayega.
+//? means  this is optional
+//fields: [companyId]
+
+//Prisma: "User table mein wo kaunsa column hai jo Company ki taraf ishara kar raha hai?"
+
+//Answer: "Mera companyId column." (Rahul ka ID Card).
+
+//references: [id]
+
+//Prisma: "Ye ID saamne wali (Company) table mein kis se match karni chahiye?"
+
+//Answer: "Company table ki id se." (Company ka Registration Number).
+
+
+
+
+
+  // Relation: Is Manager ke paas aaye hue Feedbacks
+  feedbacks           Feedback[]
+}
+
+// 3. FEEDBACK (The Anonymous Message) 📝
+// Jo Employee QR Code scan karke bhejega.
+model Feedback {
+  id             String   @id @default(cuid())
+  content        String
+  createdAt      DateTime @default(now())
+
+  // 🔥 OpenAI Fields (User Request)
+  // Shuru mein khaali rahenge (Optional '?'), AI analysis ke baad bharenge.
+  sentiment      String?  // e.g. "Negative"
+  sentimentScore Int?     // e.g. 2 out of 10
+
+  // Relation: Ye message kis Manager (Branch) ke liye hai?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+//User ki ID (jo feedback model  mehmaan hai) = userId
+
+
+// user User
+// Ye kya hai: Ye database mein Store NAHI hota. Ye sirf aapke Code (Prisma) ke liye hai.
+
+ // Iska kaam: Ye aapko allow karta hai ki aap Feedback se seedha User ki details nikaal sako.
+
+ // Example: Code mein aap likhoge feedback.user.email. Agar ye line nahi hoti, toh aap email tak nahi pahunch paate.
+
+// fields: [userId]:
+
+// Prisma: "Feedback table mein Manager ka address kahan likha hai?"
+
+// Answer: "Mere userId column mein."
+
+// references: [id]:
+
+// Prisma: "User table mein ye address kahan match karun?"
+
+// Answer: "User ke id card se match karo."
+
+// (Matlab: Feedback ka userId == User ka id)
