@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 
 // 1. Global object declare kar rahe hain
+// globalThis use karne ka ekmatra (only) reason yahi hai ki humein us connection ko file ke scope se bahar nikal kar "Global" jagah par rakhna hai.
+//  now global this me pehle se defined hain ki ye kya kya le sakta h , and prisma nhi le sakta so hum forcefully bolte hain  ki lele 
+//  toh for that we used as unknown as
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
@@ -55,4 +58,4 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 // Kyun? Taaki jab agli baar file reload ho (Line 2 chale), toh usko ye connection wahan mil jaye.
 // Production mein hum connection ko global variable mein zabardasti store NAHI karte.
-// means production me new connection hi banta h and vo new connection database provider(neron , supabase etc)  dekhat h
+// means production me new connection hi banta h and vo new connection database provider(neron , supabase etc)  dektat h

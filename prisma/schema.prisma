@@ -47,7 +47,7 @@ model User {
   companyId           String?    
   company             Company?   @relation(fields: [companyId], references: [id])
 
-
+// due to company  Company ? user.company likhoge, toh ye link automatically us Company ki saari details (Name, Address, etc.) le aayega.
 //User ki table me companyId ka column hoga 
 //Agar hum ? nahi lagayenge, toh Database force karega:
 // "Bhai pehle company batao, tabhi user banega." Hum wo strictness nahi chahte.

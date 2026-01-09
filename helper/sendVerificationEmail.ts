@@ -1,4 +1,5 @@
-import { resend } from "@/lib/resend";
+import { transporter } from "@/lib/nodemailer";
+import { render } from '@react-email/render'; // 👈 Ye naya hai, HTML convert karne ke liye
 import VerificationEmail from "@/emails/VerificationEmail"; // 👈 Import kiya
 import { ApiResponse } from '@/types/ApiResponse'; 
 //  sending mail will take time toh async aaya means promise return karega 
@@ -20,13 +21,16 @@ export async function sendVerificationEmail(
 
 ): Promise<ApiResponse> {
   try {
+    const emailHtml = await render(VerificationEmail({ username, otp: verifyCode }));
     // await: Iska matlab hai "Ruko". Jab tak email chala nahi jata, agli line par mat jao
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: email,
-      subject: 'Mystery Message | Verification Code',
-      react: VerificationEmail({ username, otp: verifyCode }), // 👈 React component pass kiya
-    });
+   // await: Iska matlab hai "Ruko". Jab tak email chala nahi jata, agli line par mat jao
+    // 🔄 Yahan Resend wala code hataya aur Nodemailer lagaya
+    await transporter.sendMail({
+      from: 'Mystery App <onboarding@yourdomain.com>', // Yahan apna verified email ya naam likhein
+      to: email,
+      subject: 'Mystery Message | Verification Code',
+      html: emailHtml, // 👈 React component ki jagah converted HTML pass kiya
+    });
 
     return { success: true, message: 'Verification email sent successfully' };
 

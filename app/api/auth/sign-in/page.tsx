@@ -13,25 +13,37 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useState } from "react";
+import { useState,useEffect, use } from "react";
 //  router is used to send user to different pages programmatically
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Loader2 } from "lucide-react"; // Icons ke liye
+import { Loader2 } from "lucide-react";
 import { useDebounceValue } from 'usehooks-ts'
 import { signInSchema } from "@/schemas/signInSchema";
+ import axios,{AxiosError} from  'axios'
+import { ApiResponse } from "@/types/ApiResponse";
+
+
+
+
+
+
  const [username , setUsername] = useState('');
 //   humare paas backend se aayega  ek api call jo check karega ki username unique h ya nhi so usko hum
 //  usernameMessage me store karege
-const [UsernameMessage, setSetUsernameMessage] = useState('');
+const [UsernameMessage, SetUsernameMessage] = useState('');
 //  loading state ko manage karne k liye we use isnameLoading
-const [isUsernameLoading, setIsUsernameLoading] = useState(false);
+const [IsCheckingUsername,setIsCheckingUsername] = useState(false);
 //  form submit hora hoga toh us state ko manage karne k liye
  const [isSubmitting, setIsSubmitting] = useState(false);
 //  this hoook will manage debouncing time 3 milli sec ka lga dia ab api call hogi har 3 sec me
   const debouncedUsername = useDebounceValue(username, 300)
 //  for alerts like error alert only
 const [error, setError] = useState("")
+
+
+
+
 
 
 
@@ -42,9 +54,11 @@ export default function SignInPage() {
  
   const router = useRouter();
   
+
+
+
   // 2. Form Setup
 //   z.infer<typeof signInSchema> is a type script ki hum  chahte ki resolver jo value dega unke type bhi signin schema jaise ho
-
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -55,9 +69,50 @@ export default function SignInPage() {
     },
   });
 
+
+
+
+
+//  check unique username vali api caal hogi par jab debouncedUsername change hoga toh use effect chalega 
+  useEffect(() => {
+const checkUsernameUnique= async () => {
+if (debouncedUsername) {
+setIsCheckingUsername(true);
+SetUsernameMessage('')/* like ho sakta h pehle bhi humne data manga ho and usme error aaaya ho return me backend se toh UsernameMessge ko khali karo*/
+
+try {
+     const  response=await axios.get('/api/check-username-unique?username='+debouncedUsername);
+    //   axios se agar data managaya toh response me data me message field jo hume chye vo aayega ki success ya failed jo
+    //  backend se check uniqe username file se aayega
+
+      SetUsernameMessage(response.data.message)
+} catch (error) {
+    //  errror aise denge agar api fail hui toh
+    const axiosError= error as AxiosError<ApiResponse>
+    SetUsernameMessage(
+        axiosError.response?.data.message??"Error Checking Username"
+    )
+}
+ finally{
+    setIsCheckingUsername(false)
+ }
+}
+
+  }
+checkUsernameUnique() 
+}
+
+), [debouncedUsername];
+
+
+
+
+
+
   // 3. Submit Handler (Login Logic)
+//    on submit is method it can be of any name
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    setIsSubmitting(true);
+        setIsSubmitting(true);/*ye loader wala kaam h */
     setError(""); // Submission start hote hi purana error clear kar do
 
     // NextAuth ka signIn function call kiya

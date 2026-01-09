@@ -11,7 +11,7 @@ export const usernameValidation = z
 
 // 2. Sign Up Form ka main rule
 export const signUpSchema = z.object({
-  username: usernameValidation, // Upar wala rule yahan lagaya
+username: usernameValidation, // Upar wala rule yahan lagaya
   
   email: z.string().email({ message: 'Invalid email address' }), 
 //   Zod ye check karta hai: "Kya ye Text (String) hai?
@@ -49,7 +49,7 @@ export type SignUpInput = z.infer<typeof signUpSchema>
 //  what is this line ?
 // export type SignUpInput = z.infer<typeof signUpSchema>
 //  answer hume validation 2 baar lgana hota ek bar zod k liye and ek baar typescript check karta code me
-//  now this line 2 baar likhne se bachati hh
+//  now this line 2 baar code likhne se bachati hh
 // typeof SignUpSchema: TypeScript, zara us Zod schema ko dekho.
 
 // z.infer<...>: Us schema ko padh kar, usme se Type nikaal lo.
@@ -60,7 +60,7 @@ export type SignUpInput = z.infer<typeof signUpSchema>
 // 
 
 
-//   ques then zod jab validation dekh rha tha app chakte waqt to type script se kyu type btana
+// ques then zod jab validation dekh rha tha app chalte waqt to type script se kyu type btana
 // ans  //  Type script validation is fir developers and zod is for users
 // Galti se 'email' ki jagah 'emial' likh diya
 // console.log(userData.emial) 
