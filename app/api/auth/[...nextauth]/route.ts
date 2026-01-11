@@ -1,5 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-
+//  next auth ooptions imported for sign in with goooogle ya github
 // NextAuth by default Google/GitHub login ke liye bana tha. Agar humein 
 // "Email & Password" wala login chahiye, toh humein ye specific CredentialsProvider import karna padta hai.
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -9,12 +9,22 @@ import { prisma } from "../../../../lib/dbConnect";
 export const authOptions: NextAuthOptions = {
   // 1. Configure Providers (Login ke tareeke)
   providers: [
+    //  inside  provider we will write  the way jis jis se hum login kar sakte hai
+    //  agar humein email password se login karna hai to humein credentials provider use karna padega
     CredentialsProvider({
-      id: "credentials",
+      id: "credentials",/*Yeh is provider ka Unique Naam (Internal ID) hai takki  fronend isey call kar sake 
+      //  and usey bhi pta chal jaye ki hum kis provider se login kara rhe {google, ya email/password}.*/
+      //  ye name :credentials is useful agar hum next ka signin page use karte , as wha likha aata singn in with [name]
       name: "Credentials",
-      credentials: {
+      credentials: {/* this define ki login form me kya kya hona chahye*/
+        //  hum apna custom  login in page bnayege na ki next ka login page use karege toh abhi k liye hum yha kuch bhi label
+        //  me likh sakte hai , as vha pe page bnate hue we will give our own label
+        //  yja we write email amd pass  , par yaad rhe it is used jab next ka page use karte , 
+        //  since we r using custom page toh jo data frontend se  aayega that is checke d neeche  authorize function
+        //  me  !credentials.identifier || !credentials.password)
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        //  due to type :password Isse box mein jo type hoga wo •••••• ban jayega (hidden rahega).
       },
       // Yahan asli login logic likha jata hai
 // : any: Yeh TypeScript ka rule hai.
@@ -23,7 +33,11 @@ export const authOptions: NextAuthOptions = {
 // Toh please strict checking mat karna, isey 'Any' (kuch bhi) man kar jaane do."
 // <any>: Hum bol rahe hain ki jo data wapas aayega (User Object),
 //  wo bhi kuch bhi ho sakta hai. TypeScript us return value ko check nahi karega.
-    
+
+
+
+// Jab bhi koi banda "Sign In" button dabata hai, toh NextAuth is authorize function ko call karta hai aur poochta hai:
+// "Bhai, check karke batao ki is bande ko andar aane dein ya bahar nikaal dein?"
       async authorize(credentials: any): Promise<any> {
         // Step A: Check karo credentials aaye hain ya nahi
         if (!credentials.identifier || !credentials.password) {
@@ -74,6 +88,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     // JWT Token banate waqt
     async jwt({ token, user }) {
+      // // Yeh tab chalta hai jab token decrypt ho chuka hota hai.
       if (user) {
         token._id = user.id?.toString(); // ID save kar li
         token.isVerified = user.isVerified;
@@ -81,7 +96,7 @@ export const authOptions: NextAuthOptions = {
         token.username = user.username;
         // token.favoriteColor = "Red"; // ❌ ERROR! (Humne JWT interface inside types/next-auth.d.ts mein 'favoriteColor' define nahi kiya)
       }
-      return token;
+      return token;/*// Ab ye token encrypted hokar wapas cookie ban jayega*/
     },
     // Session (Frontend)  ko bhejo backend me bnake
     async session({ session, token }) {
@@ -96,7 +111,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   // 3. Configure Pages (Custom Login Page)
-//   extAuth ke paas pehle se ek bana-banaya Login Page hota hai. 
+//   NextAuth ke paas pehle se ek bana-banaya Login Page hota hai. 
 //  usko ovwrwrite karne ke liye humein yeh page option use karna padta hai.
   pages: {
     signIn: '/sign-in', // Hum apna khud ka page banayenge
@@ -108,6 +123,8 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   //used to decript the jwt token
+  //  token ka decription next auth khud under hood karta hai and usey DB se match har baar nhi karta bas agar
+  //  decript hogya token toh shi user hain maan kar kaam karta hai
   secret: process.env.NEXTAUTH_SECRET,
 };
 

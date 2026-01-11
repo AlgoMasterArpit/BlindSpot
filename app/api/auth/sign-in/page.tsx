@@ -1,4 +1,4 @@
-// Toh useSession NextAuth ke backend se baat karta hai  mailny  [...nextauth]/route.ts se aur poochta hai:
+// Toh useSession NextAuth ke backend se baat karta hai  mainly  [...nextauth]/route.ts se aur poochta hai:
 // "Oye, kya koi banda login hai? Agar haan, toh uska naam, photo aur ID mujhe de do."
 // Yeh aapko 2 cheezein laakar deta hai:
 // const { data: session, status } = useSession();
@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useState,useEffect, use } from "react";
+import { useState,useEffect,  } from "react";
 //  router is used to send user to different pages programmatically
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -118,6 +118,7 @@ checkUsernameUnique()
     // NextAuth ka signIn function call kiya
     const result = await signIn("credentials", {
       redirect: false, // Page reload na ho, hum manual redirect karenge
+      //  identifier is just    a variable
       identifier: data.identifier, // Ye backend ke credentials provider me jayega
       password: data.password,
     });

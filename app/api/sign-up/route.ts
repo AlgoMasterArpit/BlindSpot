@@ -2,7 +2,6 @@ import { prisma } from '../../../lib/dbConnect';
 import { sendVerificationEmail } from '../../../helper/sendVerificationEmail';
 import bcrypt from 'bcryptjs';
 
-
 export async function POST(request: Request) {
   try {
     // 1. Frontend se Data nikalo
@@ -32,8 +31,8 @@ export async function POST(request: Request) {
     }
 
     // 3. Check karo: Kya Email pehle se exist karta hai?
-    //  in model we have User and yh
-    // .a pe its prisma.user remember its prisma ke rules
+    //  in model we have User and yha
+    // pe its prisma.user remember its prisma ke rules
     const existingUserByEmail = await prisma.user.findUnique({
       where: { email },
     });
@@ -63,10 +62,13 @@ export async function POST(request: Request) {
 
         // Database update karo
         await prisma.user.update({
+
+          // "Database bhai, users ki list mein jao, aur uss bande ko dhoondo jiska email ye wala hai (arpit@gmail.com)."
+          //  and  uska ye data  update kardo
           where: { email },
           data: {
             password: hashedPassword,
-            verifyCode,
+            verifyCode: verifyCode, 
             verifyCodeExpiry: expiryDate,
           },
         });
@@ -99,6 +101,7 @@ export async function POST(request: Request) {
     );
 
     // Agar Email fail ho gaya
+    //  ye yha success  adn  emailResponse.message aaya send verification mail vali file se
     if (!emailResponse.success) {
       return Response.json(
         {
@@ -146,3 +149,15 @@ export async function POST(request: Request) {
       //  do  npm run dev then always check api in postman
       //  / also make sure abhi api test karne ke liye resend pe jo account  email id h vhi postman ki body me 
       //  honi chye tabhi mail jayega ye resend ki settings hoti h to avoid spam
+
+
+
+
+
+      
+      //  for postman  user body me raw then json , and type 
+      //  {
+//  "username": "khhd",
+//  aise hi email and pass bas and  post req karna 
+
+      // }
