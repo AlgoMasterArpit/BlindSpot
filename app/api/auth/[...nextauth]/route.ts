@@ -57,12 +57,12 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
-            throw new Error("Koi user nahi mila is email se");
+            throw new Error("Can not find username with this email");
           }
 
           // Step C: Check karo Verified hai ya nahi (Optional)
           if (!user.isVerified) {
-             throw new Error("Pehle apna email verify karein");
+             throw new Error("Please verify your Email");
           }
 
           // Step D: Password Check karo (Bcrypt se)
@@ -114,7 +114,7 @@ export const authOptions: NextAuthOptions = {
 //   NextAuth ke paas pehle se ek bana-banaya Login Page hota hai. 
 //  usko ovwrwrite karne ke liye humein yeh page option use karna padta hai.
   pages: {
-    signIn: '/sign-in', // Hum apna khud ka page banayenge
+    signIn: '/auth/sign-in', // Hum apna khud ka page banayenge
   },
 
   // 4. Session Strategy

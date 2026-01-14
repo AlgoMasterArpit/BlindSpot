@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo", // Ya "gpt-4o-mini" (sasta aur fast hai)
+        model: "gpt-3.5-turbo", 
         messages: [
           {
             //  this is prompt  that goes to gpt when api hit hogi
@@ -77,6 +77,7 @@ export async function POST(request: Request) {
       const aiResponse = completion.choices[0].message.content;
       
       if (aiResponse) {
+        //  gpt sends {"label": "Positive"} and we want label: "Positive" so JSOn.parse helps us
         const parsedData = JSON.parse(aiResponse);
         sentimentLabel = parsedData.label; // Example: "Positive"
         sentimentScore = parsedData.score; // Example: 9
