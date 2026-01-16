@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/dbConnect';
 import { usernameValidation } from '@/schemas/signUpSchema';
 import { NextResponse } from 'next/server';
-
+export const dynamic = 'force-dynamic';
 // Is route ke liye Query Schema banate hain
 // Humne jo rules signUpSchema mein banaye thay (ki username kam se kam 2 character ka ho, 
 // special character na ho), wahi rules hum yahan bhi use kar rahe hai
