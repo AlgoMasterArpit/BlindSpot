@@ -79,10 +79,30 @@ const Navbar = () => {
 
     </div>
 ) : (
-    // Login/Signup wala code same rahega...
-    <div className="flex items-center gap-2">
-       {/* ... */}
-    </div>
+   <div className="flex items-center gap-3">
+    
+    {/* 1. Login Button (Simple Text Style) */}
+    <Link href="/sign-in">
+        <Button 
+            variant="ghost" 
+            size="sm"
+            className="text-slate-100 hover:text-white hover:bg-white/10 transition-colors"
+        >
+            Login
+        </Button>
+    </Link>
+
+    {/* 2. Sign Up Button (Highlighted Purple) */}
+    <Link href="/sign-up">
+        <Button 
+            size="sm" 
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-[0_0_15px_-3px_rgba(147,51,234,0.4)] transition-all"
+        >
+            Sign Up
+        </Button>
+    </Link>
+
+</div>
 )}
             
             
