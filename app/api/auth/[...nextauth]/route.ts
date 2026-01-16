@@ -5,7 +5,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../../../lib/dbConnect";
-
+export const dynamic = 'force-dynamic';
 export const authOptions: NextAuthOptions = {
   // 1. Configure Providers (Login ke tareeke)
   providers: [
