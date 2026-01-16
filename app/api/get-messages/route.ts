@@ -46,7 +46,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
         //  ye feebacks  schema.prisma me h feedbacks  feedback[]
-      { success: true, messages: userWithFeedbacks.feedbacks }, // Frontend ki 'messages' key hi bhej rahe hain
+      { success: true, feedbacks: userWithFeedbacks.feedbacks }, // Frontend ko 'feedbacks' key hi bhej rahe hain
       { status: 200 }
     );
 

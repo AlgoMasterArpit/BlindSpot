@@ -23,6 +23,7 @@ export async function POST(request: Request) {
         username: decodedUsername,
       },
     });
+    
 
     if (!user) {
       return NextResponse.json(
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Check karo code sahi hai ya nahi aur expire toh nahi hua
-    const isCodeValid = user.verifyCode === code;
+    const isCodeValid = user.verifyCode.trim() === code.trim();
     const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
 
     if (isCodeValid && isCodeNotExpired) {

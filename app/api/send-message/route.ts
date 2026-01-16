@@ -1,23 +1,29 @@
-import { prisma } from "@/lib/dbConnect";
-import { NextResponse } from "next/server";
+import { prisma } from '@/lib/dbConnect'; // Agar ye laal ho, toh relative path '../lib/dbConnect' try karein
+import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
     const { username, content } = await request.json();
 
-    // 1. User dhoondho jisko feedback dena hai  database se
-    const user = await prisma.user.findUnique({
-      where: { username },
+    // Debugging ke liye log lagayein
+    console.log("📨 Receiving Feedback for:", username);
+
+    // FIX 1: 'findUnique' ki jagah 'findFirst' use karein (Zyada safe hai)
+    const user = await prisma.user.findFirst({
+      where: { 
+        username: username 
+      },
     });
 
     if (!user) {
+      console.log("❌ User not found in DB");
       return NextResponse.json(
         { success: false, message: "User not found" },
         { status: 404 }
       );
     }
 
-    // 2. Check karo kya wo feedback accept kar raha hai?
+    // 2. Check accepting status
     if (!user.isAcceptingMessages) {
       return NextResponse.json(
         { success: false, message: "User is not accepting feedbacks" },
@@ -25,16 +31,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Feedback create karo
-    const newFeedback = await prisma.feedback.create({ // 👈 Change: 'message' -> 'feedback'
+    // FIX 2: Feedback create
+    const newFeedback = await prisma.feedback.create({
       data: {
-        content,
-        //  here ye user db se aaya hai jisko feedback dena hai yha types vali file ka koi role nhi kabhi samjhe
-        //  uski vajah se we are accessing id directly
+        content: content,
         userId: user.id,
         createdAt: new Date(),
       },
     });
+
+    console.log("✅ Feedback Saved:", newFeedback.id);
 
     return NextResponse.json(
       { success: true, message: "Feedback sent successfully" },
@@ -42,7 +48,9 @@ export async function POST(request: Request) {
     );
 
   } catch (error) {
-    console.log("Error adding feedback ", error);
+    // Error ko console me pura print karein
+    console.error("❌ Error adding feedback:", error);
+    
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }

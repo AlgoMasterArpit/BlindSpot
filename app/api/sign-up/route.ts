@@ -70,6 +70,10 @@ export async function POST(request: Request) {
             password: hashedPassword,
             verifyCode: verifyCode, 
             verifyCodeExpiry: expiryDate,
+            //  kya hora tha ki jab me same mail pe different username le rha tha  sign up karte hue toh Db me 
+            //  vo username aaa hi nhi rha tha kyuki maine username updtae hi nhi kia tha toh verify karne me ptoblem aari thi 
+            //  toh me ab DB me user bhi update kardia hu
+            username: username,
           },
         });
       }

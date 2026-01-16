@@ -10,30 +10,26 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { verifySchema } from '@/schemas/verifySchema'; // Ya niche define kar lo
+import { verifySchema } from '@/schemas/verifySchema';
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react'; // Refresh Icon import kiya
 import { useState } from 'react';
-
-// ✅ Agar verifySchema file nahi hai toh ye use karein:
-// const verifySchema = z.object({
-//   code: z.string().length(6, 'Verification code must be 6 digits'),
-// });
 
 export default function VerifyAccount() {
   const router = useRouter();
-  const params = useParams<{ username: string }>(); // URL se username nikaalne ke liye
- //  for alerts like error alert only
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(""); // ✅ New: Success alert ke liye
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const params = useParams<{ username: string }>();
 
-  // 1. Form Setup
+  // States
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false); // ✅ Resend Loader State
+
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
     defaultValues: {
@@ -41,58 +37,75 @@ export default function VerifyAccount() {
     },
   });
 
-  // 2. Submit Handler
+  // ✅ 1. Submit Handler (Verify ke liye)
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     setIsSubmitting(true);
+    setError("");   
+    setSuccess(""); 
+
     try {
-      // API Call: Username URL se + Code Form se
       const response = await axios.post<ApiResponse>(`/api/verify-code`, {
         username: params.username,
         code: data.code,
       });
+
       if (response.data.success) {
-        // ✅ 1. Message set karo
-        setSuccess(response.data.message); 
-
-        // ✅ 2. Yahan 'setTimeout' lagao (2 second ka delay) yaani alert 2 sec k liye dikhega 
+        setSuccess(response.data.message);
         setTimeout(() => {
-          // http://localhost:3000/verify/arpit aisa url aayega 
-           router.replace(`/sign-in`)
-        }, 2000); // 2000 ms = 2 seconds
+           router.replace('/auth/sign-in'); 
+        }, 2000);
       }
-
-
-      
-
-      // User verify ho gaya, ab Login karwao
-      router.replace('/sign-in');
     } catch (error) {
-      // ❌ Error Handling
-      console.error('Error in verification of user', error);
       const axiosError = error as AxiosError<ApiResponse>;
-      
-      
+      setError(
+        axiosError.response?.data.message ?? "An error occurred during verification"
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // ✅ 2. Resend Code Handler (Naya Button Click hone par)
+  const onResend = async () => {
+    setIsResending(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await axios.post<ApiResponse>('/api/resend-code', {
+        username: params.username,
+      });
+
+      if (response.data.success) {
+        setSuccess("New verification code sent to your email.");
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
+      setError(
+        axiosError.response?.data.message ?? "Failed to resend code"
+      );
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   return (
-    
     <div className="flex justify-center items-center min-h-screen bg-gray-900 px-4">
       <div className="w-full max-w-md p-8 space-y-8 bg-slate-950 rounded-lg shadow-xl border border-slate-800">
+        
+        {/* Alerts */}
         {success && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-          <strong className="font-bold">Success! </strong>
-          <span className="block sm:inline">{success}</span>
-        </div>
-      )}
-       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-          <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
+          <div className="bg-green-500/15 border border-green-500 text-green-400 px-4 py-3 rounded relative mb-4 text-sm">
+            <strong className="font-bold">Success: </strong> {success}
+          </div>
+        )}
+        
+        {error && (
+          <div className="bg-red-500/15 border border-red-500 text-red-400 px-4 py-3 rounded relative mb-4 text-sm">
+            <strong className="font-bold">Error: </strong> {error}
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center">
           <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl mb-2 text-white">
@@ -117,7 +130,7 @@ export default function VerifyAccount() {
                     <Input 
                         placeholder="Enter 6-digit code" 
                         {...field} 
-                        className="bg-slate-900 border-slate-800 text-white placeholder:text-slate-500 focus-visible:ring-purple-500 focus-visible:ring-offset-0"
+                        className="bg-slate-900 border-slate-800 text-white placeholder:text-slate-500 focus-visible:ring-purple-500 focus-visible:ring-offset-0 tracking-widest text-center"
                     />
                   </FormControl>
                   <FormMessage className="text-red-400" />
@@ -125,6 +138,7 @@ export default function VerifyAccount() {
               )}
             />
 
+            {/* Verify Button */}
             <Button 
                 type="submit" 
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 transition-all duration-300"
@@ -134,11 +148,33 @@ export default function VerifyAccount() {
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying...
                 </>
-              ) : ('Submit')}
+              ) : ('Verify Code')}
             </Button>
-
+            
           </form>
         </Form>
+
+        {/* ✅ Resend Button Section */}
+        <div className="text-center mt-4">
+          <p className="text-slate-400 text-sm mb-2">Didn't receive the code?</p>
+          <Button 
+            variant="ghost" 
+            onClick={onResend} 
+            disabled={isResending}
+            className="text-purple-400 hover:text-purple-300 hover:bg-slate-900"
+          >
+            {isResending ? (
+               <>
+                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...
+               </>
+            ) : (
+               <>
+                 <RefreshCw className="mr-2 h-4 w-4" /> Resend Code
+               </>
+            )}
+          </Button>
+        </div>
+
       </div>
     </div>
   );
