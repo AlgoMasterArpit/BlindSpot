@@ -10,7 +10,8 @@ import { User } from "next-auth";
 // import { User } from "next-auth" karte hain, toh TypeScript aapka types wala file padhta hai aur samajh jata hai: ki mera default
 //  user modified ho gya tha us file me 
 
-
+// 👇 YE LINE ADD KAREIN (Sabse Upar)
+export const dynamic = 'force-dynamic';
 
 
 
