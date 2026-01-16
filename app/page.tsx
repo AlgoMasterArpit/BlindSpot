@@ -2,19 +2,20 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Footer from "../components/Footer"; // ✅ Footer Imported
 import { 
   QrCode, 
   Sparkles, 
   Bell, 
   ArrowRight, 
-  Play, 
-  LayoutDashboard,
-  Eye
+  Play
 } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-950 text-slate-200 selection:bg-purple-500/30">
+    // ✅ Added 'flex flex-col' to ensure footer stays at bottom
+    <div className="min-h-screen bg-gray-950 text-slate-200 selection:bg-purple-500/30 flex flex-col">
+      
       {/* ------------------- HERO SECTION ------------------- */}
       <main className="flex-grow flex flex-col items-center justify-center px-4 pt-20 pb-16 text-center">
         
@@ -41,7 +42,7 @@ export default function Home() {
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
           <Link href="/auth/sign-up">
-            <Button size="lg" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-semibold h-12 px-8 text-base">
+            <Button size="lg" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-semibold h-12 px-8 text-base shadow-[0_0_20px_-5px_rgba(147,51,234,0.5)]">
               Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
@@ -109,6 +110,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ------------------- FOOTER SECTION ------------------- */}
+      <Footer /> 
 
     </div>
   );
