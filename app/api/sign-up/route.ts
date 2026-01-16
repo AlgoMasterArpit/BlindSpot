@@ -1,7 +1,7 @@
 import { prisma } from '../../../lib/dbConnect';
 import { sendVerificationEmail } from '../../../helper/sendVerificationEmail';
 import bcrypt from 'bcryptjs';
-
+export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     // 1. Frontend se Data nikalo

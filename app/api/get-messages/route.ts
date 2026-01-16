@@ -3,6 +3,8 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { User } from "next-auth";/*ye next auth ka user hai*/
+export const dynamic = 'force-dynamic';
+
 // authuptions bnaya humne sign in ke route me 
 //  ye file bas user ke feedbacks ko DB se leke aati hai and userid milti hai session se
 export async function GET(request: Request) {

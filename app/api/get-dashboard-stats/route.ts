@@ -7,7 +7,7 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { User } from "next-auth";
-
+export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   // 1. Authentication Check 👮‍♂️ ki login h user ya nhi
   const session = await getServerSession(authOptions);

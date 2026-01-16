@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/dbConnect';
 import { NextResponse } from 'next/server';
 import { json } from 'stream/consumers';
-
+export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     //  ye username and code user ne dala hai toh hum usse le rhe hai ye data frontend se aayega 

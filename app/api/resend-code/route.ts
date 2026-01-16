@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/dbConnect';
 import { NextResponse } from 'next/server';
 import { sendVerificationEmail } from '../../../helper/sendVerificationEmail'; // Aapka helper function
-
+export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const { username } = await request.json();

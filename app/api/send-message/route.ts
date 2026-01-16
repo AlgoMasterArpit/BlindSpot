@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/dbConnect'; // Agar ye laal ho, toh relative path '../lib/dbConnect' try karein
 import { NextResponse } from 'next/server';
-
+export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const { username, content } = await request.json();
