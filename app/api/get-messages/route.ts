@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/[...nextauth]/options";
 import { prisma } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { User } from "next-auth";/*ye next auth ka user hai*/

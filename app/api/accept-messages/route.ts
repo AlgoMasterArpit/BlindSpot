@@ -2,7 +2,7 @@
 // Agar cookie sahi hai, toh ye aapko Session Object deta hai (jisme user ka naam, email, id hoti hai).
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/[...nextauth]/options";
 import { prisma } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { User } from "next-auth";
