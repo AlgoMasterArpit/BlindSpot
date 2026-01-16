@@ -82,7 +82,7 @@ const Navbar = () => {
    <div className="flex items-center gap-3">
     
     {/* 1. Login Button (Simple Text Style) */}
-    <Link href="/sign-in">
+    <Link href="/auth/sign-in">
         <Button 
             variant="ghost" 
             size="sm"
@@ -93,7 +93,7 @@ const Navbar = () => {
     </Link>
 
     {/* 2. Sign Up Button (Highlighted Purple) */}
-    <Link href="/sign-up">
+    <Link href="/auth/sign-up">
         <Button 
             size="sm" 
             className="bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-[0_0_15px_-3px_rgba(147,51,234,0.4)] transition-all"
