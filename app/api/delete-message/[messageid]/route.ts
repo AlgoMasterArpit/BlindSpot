@@ -3,7 +3,7 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/dbConnect";
 import { NextResponse } from "next/server"; // Using NextResponse for consistency
 import { User } from "next-auth";
-
+export const dynamic = 'force-dynamic';
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ messageid: string }> }
