@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
-            throw new Error("Can not find username with this email");
+            throw new Error("Can not find username ");
           }
 
           // Step C: Check karo Verified hai ya nahi (Optional)
